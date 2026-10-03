@@ -6,7 +6,7 @@
 
 ### YouTube, with more control.
 
-A highly customizable, open-source YouTube client with privacy in mind.
+A highly customizable, open-source YouTube client with privacy in mind. Also supports playing from all [yt-dlp supported sites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
 
 Watch without a Google account. Keep your library on your device. Make the interface yours.
 
