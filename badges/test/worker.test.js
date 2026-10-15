@@ -48,7 +48,7 @@ test('each public badge is a rounded standalone SVG with an accessible name', as
 
 test('static badges need no upstream or cache requests', async () => {
   const h = harness(new Error('Offline'))
-  for (const key of ['download', 'features', 'matrix-link', 'fluxer-link', 'matrix']) {
+  for (const key of ['download', 'download-outline', 'features', 'website', 'source', 'discussions', 'privacy', 'matrix-link', 'fluxer-link', 'matrix']) {
     assert.equal((await h.request(`/${key}.svg`)).status, 200)
   }
   assert.equal(h.calls.length, 0)

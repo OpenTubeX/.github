@@ -20,7 +20,10 @@ Watch without a Google account. Keep your library on your device. Make the inter
 [![Join Matrix](https://opentubex-badges.withered-flower-f0f2.workers.dev/matrix-link.svg)](https://matrix.opentubex.org/)
 [![Join Fluxer](https://opentubex-badges.withered-flower-f0f2.workers.dev/fluxer-link.svg)](https://fluxer.opentubex.org/)
 
-[Website](https://opentubex.org/) · [Source code](https://github.com/OpenTubeX/OpenTubeX) · [Discussions](https://github.com/OpenTubeX/OpenTubeX/discussions) · [Privacy](https://opentubex.org/privacy/)
+[![Website](https://opentubex-badges.withered-flower-f0f2.workers.dev/website.svg)](https://opentubex.org/)
+[![Source code](https://opentubex-badges.withered-flower-f0f2.workers.dev/source.svg)](https://github.com/OpenTubeX/OpenTubeX)
+[![Discussions](https://opentubex-badges.withered-flower-f0f2.workers.dev/discussions.svg)](https://github.com/OpenTubeX/OpenTubeX/discussions)
+[![Privacy](https://opentubex-badges.withered-flower-f0f2.workers.dev/privacy.svg)](https://opentubex.org/privacy/)
 
 [![GitHub asset downloads](https://opentubex-badges.withered-flower-f0f2.workers.dev/downloads.svg)](https://github.com/OpenTubeX/OpenTubeX/releases)
 [![Stars](https://opentubex-badges.withered-flower-f0f2.workers.dev/stars.svg)](https://github.com/OpenTubeX/OpenTubeX/stargazers)

@@ -10,13 +10,21 @@ const paths = {
   shield: '<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-5"/>',
   translate: '<path d="M3 5h12M9 3v2m4 0c-1 6-4 9-9 12m1-9c1 4 4 7 8 9m1 4 5-12 5 12m-8-4h6"/>',
   compass: '<circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6Z"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>',
+  code: '<path d="m7 6-6 6 6 6m10-12 6 6-6 6m-4-14-2 16"/>',
+  discussion: '<path d="M14 15H7l-4 4V5h14v10Zm-4 4h7l4 3V8h-4"/>',
   license: '<path d="M12 3v18M7 21h10M4 7l8-3 8 3M4 7l-3 7h6Zm16 0-3 7h6Z"/>',
   package: '<path d="m12 3 9 5v9l-9 5-9-5V8Zm0 9v10M3 8l9 4 9-4M7 5l9 5"/>'
 }
 
 export const definitions = {
   download: { label: 'Download OpenTubeX', icon: 'download', kind: 'cta' },
+  'download-outline': { label: 'Download OpenTubeX', icon: 'download', kind: 'outline' },
   features: { label: 'Explore features', icon: 'compass', kind: 'outline' },
+  website: { label: 'Website', icon: 'globe', kind: 'outline' },
+  source: { label: 'Source code', icon: 'code', kind: 'outline' },
+  discussions: { label: 'Discussions', icon: 'discussion', kind: 'outline' },
+  privacy: { label: 'Privacy', icon: 'shield', kind: 'outline' },
   'matrix-link': { label: 'Join Matrix', icon: 'matrix', kind: 'outline' },
   'fluxer-link': { label: 'Join Fluxer', icon: 'fluxer', kind: 'outline' },
   matrix: { label: 'Matrix', icon: 'matrix', value: '#opentubex' },
