@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "opentubex-badges",
+  "account_id": "cf8bbc47f2bc101e87d665bda1438b49",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-15",
+  "workers_dev": true,
+  "preview_urls": false
+}

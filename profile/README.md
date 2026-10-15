@@ -12,20 +12,20 @@ Watch without a Google account. Keep your library on your device. Make the inter
 
 <p>
   <a href="https://opentubex.org/downloads/">
-    <img src="https://img.shields.io/badge/Download-C62828?style=for-the-badge&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTEyIDN2MTJtLTUtNSA1IDUgNS01TTUgMTV2NmgxNHYtNiIvPjwvc3ZnPg%3D%3D&amp;labelColor=0B3D3E&amp;color=147A70" width="220" alt="Download">
+    <img src="https://opentubex-badges.withered-flower-f0f2.workers.dev/download.svg" width="220" alt="Download">
   </a>
 </p>
 
-[![Explore features](https://img.shields.io/badge/Explore-Features-6E7681?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iOSIvPjxwYXRoIGQ9Im0xNiA4LTIgNi02IDIgMi02WiIvPjwvc3ZnPg%3D%3D&labelColor=0B3D3E&color=147A70)](https://opentubex.org/extra-features/)
-[![Join Matrix](https://img.shields.io/badge/Join-Matrix-6E7681?style=for-the-badge&logo=matrix&logoColor=white&labelColor=0B3D3E&color=147A70)](https://matrix.opentubex.org/)
-[![Join Fluxer](https://img.shields.io/badge/Join-Fluxer-6E7681?style=for-the-badge&logo=fluxer&logoColor=white&labelColor=0B3D3E&color=147A70)](https://fluxer.opentubex.org/)
+[![Explore features](https://opentubex-badges.withered-flower-f0f2.workers.dev/features.svg)](https://opentubex.org/extra-features/)
+[![Join Matrix](https://opentubex-badges.withered-flower-f0f2.workers.dev/matrix-link.svg)](https://matrix.opentubex.org/)
+[![Join Fluxer](https://opentubex-badges.withered-flower-f0f2.workers.dev/fluxer-link.svg)](https://fluxer.opentubex.org/)
 
 [Website](https://opentubex.org/) · [Source code](https://github.com/OpenTubeX/OpenTubeX) · [Discussions](https://github.com/OpenTubeX/OpenTubeX/discussions) · [Privacy](https://opentubex.org/privacy/)
 
-[![GitHub asset downloads](https://img.shields.io/github/downloads/OpenTubeX/OpenTubeX/total?style=for-the-badge&label=GitHub+downloads&labelColor=0B3D3E&color=147A70&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTEyIDN2MTJtLTUtNSA1IDUgNS01TTUgMTV2NmgxNHYtNiIvPjwvc3ZnPg%3D%3D)](https://github.com/OpenTubeX/OpenTubeX/releases)
-[![Stars](https://img.shields.io/github/stars/OpenTubeX/OpenTubeX?style=for-the-badge&label=Stars&labelColor=0B3D3E&color=147A70&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0ibTEyIDMgMi44IDUuNyA2LjMuOS00LjUgNC40IDEuMSA2LjItNS43LTMtNS43IDMgMS4xLTYuMi00LjUtNC40IDYuMy0uOVoiLz48L3N2Zz4%3D)](https://github.com/OpenTubeX/OpenTubeX/stargazers)
-[![Latest release](https://img.shields.io/github/v/release/OpenTubeX/OpenTubeX?style=for-the-badge&label=Release&labelColor=0B3D3E&color=147A70&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTMgM2g4bDEwIDEwLTggOEwzIDExWiIvPjxjaXJjbGUgY3g9IjciIGN5PSI3IiByPSIxIi8%2BPC9zdmc%2B)](https://github.com/OpenTubeX/OpenTubeX/releases/latest)
-[![License](https://img.shields.io/github/license/OpenTubeX/OpenTubeX?style=for-the-badge&labelColor=0B3D3E&color=147A70&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTEyIDN2MThNNyAyMWgxME00IDdsOC0zIDggM000IDdsLTMgN2g2Wk0yMCA3bC0zIDdoNloiLz48L3N2Zz4%3D)](https://github.com/OpenTubeX/OpenTubeX/blob/development/LICENSE)
+[![GitHub asset downloads](https://opentubex-badges.withered-flower-f0f2.workers.dev/downloads.svg)](https://github.com/OpenTubeX/OpenTubeX/releases)
+[![Stars](https://opentubex-badges.withered-flower-f0f2.workers.dev/stars.svg)](https://github.com/OpenTubeX/OpenTubeX/stargazers)
+[![Latest release](https://opentubex-badges.withered-flower-f0f2.workers.dev/release.svg)](https://github.com/OpenTubeX/OpenTubeX/releases/latest)
+[![License](https://opentubex-badges.withered-flower-f0f2.workers.dev/license.svg)](https://github.com/OpenTubeX/OpenTubeX/blob/development/LICENSE)
 
 </div>
 

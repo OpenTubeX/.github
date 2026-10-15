@@ -1,0 +1,13 @@
+{
+  "name": "opentubex-badges",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/index.js && node --check src/render.js",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.151.0"
+  }
+}
