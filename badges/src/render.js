@@ -5,7 +5,7 @@ const paths = {
   download: '<path d="M12 3v12m-5-5 5 5 5-5M5 15v6h14v-6"/>',
   release: '<path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7" cy="7" r="1"/>',
   star: '<path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9Z"/>',
-  build: '<path d="m14 4 6 6M4 20l7-7M13 5l-3 3 6 6 3-3M3 17l4 4M5 3l4 4m-6 0 4-4"/>',
+  build: '<path fill="currentColor" stroke="none" d="M20 2a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-5v13a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V9H3.5a1 1 0 0 1-1-1V5.618a1 1 0 0 1 .553-.894L8.5 2zm-5 2H8.972L4.5 6.236V7H11v14h2V7h2zm4 0h-2v3h2z"/>',
   tests: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18m-12 6 2 2 4-4"/>',
   shield: '<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-5"/>',
   translate: '<path d="M3 5h12M9 3v2m4 0c-1 6-4 9-9 12m1-9c1 4 4 7 8 9m1 4 5-12 5 12m-8-4h6"/>',
@@ -70,7 +70,7 @@ function icon(name, x, y, color, size) {
       .replace('<svg ', `<svg x="${x}" y="${y}" width="${size}" height="${size}" `)
       .replace(/white|#ffffff|#fff/gi, color)
   }
-  return `<g transform="translate(${x} ${y}) scale(${size / 24})" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</g>`
+  return `<g transform="translate(${x} ${y}) scale(${size / 24})" fill="none" color="${color}" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</g>`
 }
 
 export function renderBadge(definition, value = definition.value, state) {
