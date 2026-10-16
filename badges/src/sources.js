@@ -10,7 +10,7 @@ async function github(path, env, fetch) {
     },
     signal: AbortSignal.timeout(10000)
   })
-  if (!response.ok) throw new Error(`GitHub status ${response.status}`)
+  if (!response.ok) throw new Error(`GitHub status ${response.status}: ${(await response.text()).slice(0, 200)}`)
   return response.json()
 }
 
