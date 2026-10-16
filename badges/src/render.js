@@ -14,6 +14,10 @@ const paths = {
   code: '<path d="m7 6-6 6 6 6m10-12 6 6-6 6m-4-14-2 16"/>',
   discussion: '<path d="M14 15H7l-4 4V5h14v10Zm-4 4h7l4 3V8h-4"/>',
   license: '<path d="M12 3v18M7 21h10M4 7l8-3 8 3M4 7l-3 7h6Zm16 0-3 7h6Z"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-9.5v.5"/>',
+  heart: '<path d="M12 20s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.8 4.5 4.5 0 0 1 8 2.8c0 5.5-8 10-8 10Z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   package: '<path d="m12 3 9 5v9l-9 5-9-5V8Zm0 9v10M3 8l9 4 9-4M7 5l9 5"/>'
 }
 
@@ -25,6 +29,13 @@ export const definitions = {
   source: { label: 'Source code', icon: 'code', kind: 'outline' },
   discussions: { label: 'Discussions', icon: 'discussion', kind: 'outline' },
   privacy: { label: 'Privacy', icon: 'shield', kind: 'outline' },
+  screenshots: { label: 'Screenshots', icon: 'image', kind: 'outline' },
+  'how-it-works': { label: 'How it works', icon: 'info', kind: 'outline' },
+  'download-links': { label: 'Download links', icon: 'download', kind: 'outline' },
+  contributing: { label: 'Contributing', icon: 'heart', kind: 'outline' },
+  localization: { label: 'Localization', icon: 'translate', kind: 'outline' },
+  contact: { label: 'Contact', icon: 'mail', kind: 'outline' },
+  'license-link': { label: 'License', icon: 'license', kind: 'outline' },
   'matrix-link': { label: 'Join Matrix', icon: 'matrix', kind: 'outline' },
   'fluxer-link': { label: 'Join Fluxer', icon: 'fluxer', kind: 'outline' },
   matrix: { label: 'Matrix', icon: 'matrix', value: '#opentubex' },
