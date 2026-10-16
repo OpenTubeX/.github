@@ -2,9 +2,9 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { handleRequest, parseData } from '../src/index.js'
 import { definitions, renderBadge } from '../src/render.js'
-import sources from '../src/sources.js'
+import sources, { githubSources, metric } from '../src/sources.js'
 
-function harness(upstream = { message: '29k' }) {
+function harness(upstream = { message: '29k' }, env = {}) {
   const entries = new Map()
   const calls = []
   const pending = []
@@ -12,6 +12,7 @@ function harness(upstream = { message: '29k' }) {
     fetch: async (url, options) => {
       calls.push({ url, options })
       if (upstream instanceof Error) throw upstream
+      if (typeof upstream === 'function') return upstream(url)
       return Response.json(upstream)
     },
     cache: {
@@ -23,7 +24,7 @@ function harness(upstream = { message: '29k' }) {
     calls,
     entries,
     async request(path, method = 'GET') {
-      const response = await handleRequest(new Request(`https://badges.example${path}`, { method }), {}, { waitUntil: promise => pending.push(promise) }, dependencies)
+      const response = await handleRequest(new Request(`https://badges.example${path}`, { method }), env, { waitUntil: promise => pending.push(promise) }, dependencies)
       await Promise.all(pending)
       return response
     }
@@ -56,34 +57,34 @@ test('static badges need no upstream or cache requests', async () => {
 })
 
 test('live values are rendered and cached for five minutes, including HEAD requests', async () => {
-  const h = harness({ message: '42k' })
-  const first = await h.request('/downloads.svg')
-  assert.match(await first.text(), /<title>Downloads: 42k<\/title>/)
+  const h = harness({ message: 'v1.2.3' })
+  const first = await h.request('/aur.svg')
+  assert.match(await first.text(), /<title>AUR: v1.2.3<\/title>/)
   assert.equal(first.headers.get('Cache-Control'), 'public, max-age=300')
-  assert.equal(h.calls[0].url, sources.downloads)
-  assert.equal((await h.request('/downloads.svg', 'HEAD')).headers.get('Content-Type'), 'image/svg+xml; charset=utf-8')
-  assert.equal(await (await h.request('/downloads.svg', 'HEAD')).text(), '')
+  assert.equal(h.calls[0].url, sources.aur)
+  assert.equal((await h.request('/aur.svg', 'HEAD')).headers.get('Content-Type'), 'image/svg+xml; charset=utf-8')
+  assert.equal(await (await h.request('/aur.svg', 'HEAD')).text(), '')
   assert.equal(h.calls.length, 1)
 })
 
 test('query strings cannot change the feed or bypass the cache', async () => {
   const h = harness()
-  await h.request('/downloads.svg?url=https://untrusted.example&color=red')
-  await h.request('/downloads.svg?nocache=1')
+  await h.request('/aur.svg?url=https://untrusted.example&color=red')
+  await h.request('/aur.svg?nocache=1')
   assert.equal(h.calls.length, 1)
-  assert.equal(h.calls[0].url, sources.downloads)
-  assert.ok(h.entries.has('https://badges.example/downloads.svg'))
+  assert.equal(h.calls[0].url, sources.aur)
+  assert.ok(h.entries.has('https://badges.example/aur.svg'))
 })
 
 test('HEAD on a cache miss fetches valid data and caches a complete SVG', async () => {
   const h = harness({ message: '112' })
-  assert.equal(await (await h.request('/stars.svg', 'HEAD')).text(), '')
-  assert.match(await (await h.request('/stars.svg')).text(), /Stars: 112/)
+  assert.equal(await (await h.request('/fluxer.svg', 'HEAD')).text(), '')
+  assert.match(await (await h.request('/fluxer.svg')).text(), /Fluxer: 112/)
   assert.equal(h.calls.length, 1)
 })
 
 test('upstream failures display Unavailable with a short cache instead of a sample', async () => {
-  for (const upstream of [new Error('Timed out'), { message: 'inaccessible' }, { message: 'not found' }, { isError: true, message: 'passing' }, { message: '' }, { message: 123 }, { message: 'x'.repeat(65) }]) {
+  for (const upstream of [new Error('Timed out'), { message: 'inaccessible' }, { message: 'not found' }, { message: 'Unable to select next GitHub token from pool' }, { isError: true, message: 'passing' }, { message: '' }, { message: 123 }, { message: 'x'.repeat(65) }]) {
     const h = harness(upstream)
     const response = await h.request('/build.svg')
     const svg = await response.text()
@@ -138,7 +139,49 @@ test('all dynamic sources use fixed HTTPS JSON feeds and preserve data selection
     assert.equal(url.origin, 'https://img.shields.io')
     assert.ok(url.pathname.endsWith('.json'))
   }
-  assert.equal(new URL(sources.release).searchParams.get('filter'), '!*-nightly-*')
   for (const key of ['build', 'e2e', 'codeql']) assert.equal(new URL(sources[key]).searchParams.get('branch'), 'development')
   assert.equal(new URL(sources.translations).searchParams.get('server'), 'https://weblate.opentubex.org')
+})
+
+test('GitHub badges read the GitHub API directly with the configured token', async () => {
+  const responses = {
+    '/repos/OpenTubeX/OpenTubeX/releases/latest': { tag_name: 'v0.36.1-beta' },
+    '/repos/OpenTubeX/OpenTubeX/releases?per_page=100&page=1': Array.from({ length: 100 }, () => ({ assets: [{ download_count: 300 }, { download_count: 4 }] })),
+    '/repos/OpenTubeX/OpenTubeX/releases?per_page=100&page=2': [{ assets: [{ download_count: 1000 }] }],
+    '/repos/microsoft/winget-pkgs/contents/manifests/o/OpenTubeX/OpenTubeX': [{ type: 'dir', name: '0.9.0' }, { type: 'dir', name: '0.10.1' }, { type: 'file', name: '9.9.9' }],
+    '/repos/OpenTubeX/OpenTubeX': { stargazers_count: 1234, license: { spdx_id: 'AGPL-3.0' } }
+  }
+  const upstream = url => {
+    const { origin, pathname, search } = new URL(url)
+    assert.equal(origin, 'https://api.github.com')
+    return Response.json(responses[pathname + search])
+  }
+  for (const [key, title] of [['release', 'Release: v0.36.1-beta'], ['downloads', 'Downloads: 31k'], ['winget', 'WinGet: v0.10.1'], ['stars', 'Stars: 1.2k'], ['license', 'License: AGPL-3.0']]) {
+    const h = harness(upstream, { GITHUB_TOKEN: 'secret' })
+    assert.match(await (await h.request(`/${key}.svg`)).text(), new RegExp(`<title>${title}</title>`))
+    for (const call of h.calls) assert.equal(call.options.headers.Authorization, 'Bearer secret')
+  }
+  assert.deepEqual(Object.keys(githubSources).filter(key => Object.hasOwn(sources, key)), [])
+})
+
+test('GitHub API errors produce a readable fallback without a token', async () => {
+  const h = harness(() => new Response('rate limited', { status: 403 }))
+  const response = await h.request('/release.svg')
+  assert.match(await response.text(), /<title>Release: Unavailable<\/title>/)
+  assert.equal(h.calls[0].options.headers.Authorization, undefined)
+})
+
+test('the last real value is shown while a feed is failing', async () => {
+  let failing = false
+  const h = harness(() => failing ? new Response('', { status: 502 }) : Response.json({ message: 'v1.2.3' }))
+  await h.request('/aur.svg')
+  failing = true
+  h.entries.delete('https://badges.example/aur.svg')
+  const response = await h.request('/aur.svg')
+  assert.match(await response.text(), /<title>AUR: v1.2.3<\/title>/)
+  assert.equal(response.headers.get('Cache-Control'), 'public, max-age=30')
+})
+
+test('counts use compact metric notation', () => {
+  for (const [count, text] of [[0, '0'], [999, '999'], [1000, '1k'], [1250, '1.3k'], [30449, '30k'], [999999, '1M']]) assert.equal(metric(count), text)
 })
