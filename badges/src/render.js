@@ -18,7 +18,8 @@ const paths = {
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-9.5v.5"/>',
   heart: '<path d="M12 20s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.8 4.5 4.5 0 0 1 8 2.8c0 5.5-8 10-8 10Z"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
-  package: '<path d="m12 3 9 5v9l-9 5-9-5V8Zm0 9v10M3 8l9 4 9-4M7 5l9 5"/>'
+  package: '<path d="m12 3 9 5v9l-9 5-9-5V8Zm0 9v10M3 8l9 4 9-4M7 5l9 5"/>',
+  gauge: '<path d="M3 17a9 9 0 0 1 18 0"/><path d="m12 17 4-5"/>'
 }
 
 export const definitions = {
@@ -46,6 +47,7 @@ export const definitions = {
   build: { label: 'Build', icon: 'build', workflow: true },
   e2e: { label: 'E2E tests', icon: 'tests', workflow: true },
   codeql: { label: 'CodeQL', icon: 'shield', workflow: true },
+  scorecard: { label: 'Scorecard', icon: 'gauge' },
   translations: { label: 'Translated', icon: 'translate' },
   fluxer: { label: 'Fluxer', icon: 'fluxer' },
   winget: { label: 'WinGet', icon: 'package' },
