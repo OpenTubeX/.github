@@ -159,7 +159,10 @@ test('GitHub badges read the GitHub API directly with the configured token', asy
   for (const [key, title] of [['release', 'Release: v0.36.1-beta'], ['downloads', 'Downloads: 31k'], ['winget', 'WinGet: v0.10.1'], ['stars', 'Stars: 1.2k'], ['license', 'License: AGPL-3.0']]) {
     const h = harness(upstream, { GITHUB_TOKEN: 'secret' })
     assert.match(await (await h.request(`/${key}.svg`)).text(), new RegExp(`<title>${title}</title>`))
-    for (const call of h.calls) assert.equal(call.options.headers.Authorization, 'Bearer secret')
+    for (const call of h.calls) {
+      assert.equal(call.options.headers.Authorization, 'Bearer secret')
+      assert.equal(call.options.headers['X-GitHub-Api-Version'], '2026-03-10')
+    }
   }
   assert.deepEqual(Object.keys(githubSources).filter(key => Object.hasOwn(sources, key)), [])
 })

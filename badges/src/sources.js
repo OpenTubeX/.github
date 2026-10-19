@@ -1,11 +1,11 @@
 const REPO = '/repos/OpenTubeX/OpenTubeX'
 
-async function github(path, env, fetch, version = '2022-11-28') {
+async function github(path, env, fetch) {
   const response = await fetch(`https://api.github.com${path}`, {
     headers: {
       Accept: 'application/vnd.github+json',
       'User-Agent': 'opentubex-badges',
-      'X-GitHub-Api-Version': version,
+      'X-GitHub-Api-Version': '2026-03-10',
       ...(env.GITHUB_TOKEN ? { Authorization: `Bearer ${env.GITHUB_TOKEN}` } : {})
     },
     signal: AbortSignal.timeout(10000)
@@ -76,7 +76,7 @@ export async function starHistory(env, fetch) {
   const weeks = []
   // GitHub returns at most 30 weeks per page, newest first.
   for (let page = 1; page <= 100; page++) {
-    const batch = await github(`${REPO}/stargazers/history?per_page=30&page=${page}`, env, fetch, '2026-03-10')
+    const batch = await github(`${REPO}/stargazers/history?per_page=30&page=${page}`, env, fetch)
     if (!Array.isArray(batch) || batch.length > 30 || batch.some(item =>
       !Number.isSafeInteger(item.week) || item.week < 0 || !Number.isSafeInteger(item.total) || item.total < 0)) {
       throw new Error('Invalid star history')
