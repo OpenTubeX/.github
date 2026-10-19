@@ -3,6 +3,19 @@ import { text } from './render.js'
 
 export const activityUrl = 'https://repobeats.axiom.co/api/embed/7abf4173ece7177b69cfb890c44de4385c4a45f1.svg'
 
+const activityThemes = {
+  dark: {
+    issue: '#8CC8FF', issueClosed: '#639BD0', issueText: '#A9D6FF',
+    pullRequest: '#D4AEFF', pullRequestClosed: '#A482D0', pullRequestText: '#D4AEFF',
+    push: '#F2B975', pushText: '#F2B975', contributor: '#9ED6A4'
+  },
+  light: {
+    issue: '#347BB5', issueClosed: '#24588C', issueText: '#24588C',
+    pullRequest: '#9362CB', pullRequestClosed: '#62438D', pullRequestText: '#62438D',
+    push: '#B66B22', pushText: '#92521B', contributor: '#35734C'
+  }
+}
+
 const attributes = {
   svg: ['width', 'height', 'viewBox', 'fill', 'xmlns'],
   g: ['transform'], rect: ['x', 'y', 'width', 'height', 'rx', 'fill', 'stroke', 'opacity'],
@@ -16,12 +29,22 @@ const escapeXml = value => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<
 // forward upstream scripts, links, styles, event handlers, or external assets.
 export function renderProjectActivity(source, theme = 'dark') {
   const palette = widgetThemes[theme]
+  const activity = activityThemes[theme]
   const colors = {
-    '#61adf4': palette.accent, '#406cc4': palette.secondary,
-    '#cf54fc': palette.accent, '#7b58c9': palette.secondary,
-    '#ff7a35': palette.accent, '#ba473e': palette.foreground,
-    '#487b41': palette.accent, '#459631': palette.accent, '#cf3e3e': palette.negative,
+    '#61adf4': activity.issue, '#406cc4': activity.issueClosed,
+    '#326ce5': activity.issueClosed, '#00bcf7': activity.issue,
+    '#cf54fc': activity.pullRequest, '#7b58c9': activity.pullRequestClosed,
+    '#ce5aff': activity.pullRequest, '#7c64bd': activity.pullRequestClosed,
+    '#ff7a35': activity.push, '#ba473e': activity.push,
+    '#ff553a': activity.push, '#cd2e31': activity.push,
+    '#487b41': activity.contributor, '#459631': activity.contributor,
+    '#55ba3c': activity.contributor, '#36c5f0': activity.contributor,
+    '#cf3e3e': palette.negative,
     '#777': palette.muted
+  }
+  const headingColors = {
+    '#406cc4': activity.issueText, '#7b58c9': activity.pullRequestText,
+    '#ba473e': activity.pushText, '#487b41': activity.contributor
   }
   const fallback = source === null
   let content = ''
@@ -43,7 +66,9 @@ export function renderProjectActivity(source, theme = 'dark') {
         labels.push(value)
         const size = textAttributes.class?.includes('smaller') ? 12 : 14
         const weight = textAttributes.class?.includes('bold') ? 'SemiBold' : 'Medium'
-        const color = textAttributes.fill === '#CF3E3E' ? palette.negative : textAttributes.class?.includes('smaller') ? palette.muted : palette.foreground
+        const color = textAttributes.fill === '#CF3E3E' ? palette.negative
+          : textAttributes.class?.includes('smaller') ? palette.muted
+            : headingColors[textAttributes.fill?.toLowerCase()] ?? palette.foreground
         const width = text(value, 0, 0, size, weight).width
         const x = Number(textAttributes.x) - (textAttributes['text-anchor'] === 'end' ? width : 0)
         content += text(value, x, Number(textAttributes.y), size, weight, color).svg

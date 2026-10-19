@@ -14,7 +14,7 @@ test('activity preserves every metric, chart bar and contributor in the styled S
   assert.equal((svg.match(/ opacity="/g) ?? []).length, (fixture.match(/ opacity="/g) ?? []).length)
   assert.ok(!/<text|<style|<image|NaN|undefined/.test(svg))
   assert.match(svg, /rx="12"/)
-  assert.match(svg, /#0B3D3E/)
+  assert.match(svg, /#202426/)
 })
 
 test('activity rejects active markup, external resources and changed feed layouts', () => {
