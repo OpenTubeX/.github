@@ -1,3 +1,4 @@
+import { widgetThemes } from './widget-theme.js'
 import { text, icon } from './render.js'
 
 export function starAxisTicks(total) {
@@ -8,16 +9,17 @@ export function starAxisTicks(total) {
   return Array.from({ length: intervals + 1 }, (_, index) => index * step)
 }
 
-export function renderStarHistory(points) {
+export function renderStarHistory(points, theme = 'dark') {
+  const palette = widgetThemes[theme]
   const total = points?.at(-1)?.count ?? 0
   const title = points ? `Star history: ${total} stars on OpenTubeX/OpenTubeX` : 'Star history: Unavailable'
-  const label = (value, x, y, size = 13, weight = 'Medium', color = '#D5E8E4') => text(value, x, y, size, weight, color).svg
-  let content = icon('star', 26, 24, '#89DED2', 22) + label('Star history', 60, 43, 21, 'SemiBold', '#E8F2F0')
+  const label = (value, x, y, size = 13, weight = 'Medium', color = palette.muted) => text(value, x, y, size, weight, color).svg
+  let content = icon('star', 26, 24, palette.accent, 22) + label('Star history', 60, 43, 21, 'SemiBold', palette.foreground)
   content += label('OpenTubeX / OpenTubeX', 26, 70)
   const count = points ? `${total.toLocaleString('en-US')} stars` : 'Unavailable'
-  const countText = text(count, 0, 0, 16, 'SemiBold', '#0B3D3E')
-  content += `<rect x="${690 - countText.width}" y="24" width="${countText.width + 24}" height="34" rx="10" fill="#D5E8E4"/>`
-  content += label(count, 702 - countText.width, 46, 16, 'SemiBold', '#0B3D3E')
+  const countText = text(count, 0, 0, 16, 'SemiBold', palette.countText)
+  content += `<rect x="${690 - countText.width}" y="24" width="${countText.width + 24}" height="34" rx="10" fill="${palette.countBackground}"/>`
+  content += label(count, 702 - countText.width, 46, 16, 'SemiBold', palette.countText)
   if (points?.length) {
     const start = points[0].time
     const end = Math.max(points.at(-1).time, start + 604800000)
@@ -26,15 +28,15 @@ export function renderStarHistory(points) {
     const x = time => 66 + (time - start) / (end - start) * 620
     const y = count => 290 - count / ceiling * 184
     for (const value of ticks) {
-      content += `<path d="M66 ${y(value)}H686" stroke="#A9CEC7" stroke-opacity=".18"/>`
+      content += `<path d="M66 ${y(value)}H686" stroke="${palette.grid}" stroke-opacity=".18"/>`
       const tickLabel = value.toLocaleString('en-US', { notation: 'compact', maximumFractionDigits: 1 })
       content += label(tickLabel, 54 - text(tickLabel, 0, 0, 12).width, y(value) + 4, 12)
     }
     const coordinates = points.map(point => `${x(point.time).toFixed(2)} ${y(point.count).toFixed(2)}`)
     const line = `M${coordinates.join(' L')}`
     content += `<path d="${line} L${x(points.at(-1).time)} 290 H66 Z" fill="url(#area)"/>`
-    content += `<path d="${line}" fill="none" stroke="#89DED2" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`
-    content += `<circle cx="${x(points.at(-1).time)}" cy="${y(total)}" r="4" fill="#E8F2F0" stroke="#89DED2" stroke-width="2"/>`
+    content += `<path d="${line}" fill="none" stroke="${palette.accent}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`
+    content += `<circle cx="${x(points.at(-1).time)}" cy="${y(total)}" r="4" fill="${palette.point}" stroke="${palette.accent}" stroke-width="2"/>`
     for (let i = 0; i <= 3; i++) {
       const time = start + (end - start) * i / 3
       const date = new Date(time).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
@@ -45,5 +47,5 @@ export function renderStarHistory(points) {
     content += label(points ? 'No stars yet' : 'Star history is temporarily unavailable', 66, 200, 18)
   }
   content += label('Cumulative stars by week', 26, 352, 12)
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="740" height="376" viewBox="0 0 740 376" role="img" aria-label="${title}"><title>${title}</title><desc>Weekly cumulative GitHub stars. Stars that have been removed are not included.</desc><defs><linearGradient id="ocean" x2="1" y2="1"><stop stop-color="#0B3D3E"/><stop offset="1" stop-color="#145A58"/></linearGradient><linearGradient id="area" x2="0" y2="1"><stop stop-color="#89DED2" stop-opacity=".24"/><stop offset="1" stop-color="#89DED2" stop-opacity="0"/></linearGradient></defs><rect x=".5" y=".5" width="739" height="375" rx="12" fill="url(#ocean)" stroke="#4A9D93" stroke-opacity=".65"/>${content}</svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="740" height="376" viewBox="0 0 740 376" role="img" aria-label="${title}"><title>${title}</title><desc>Weekly cumulative GitHub stars. Stars that have been removed are not included.</desc><defs><linearGradient id="ocean" x2="1" y2="1"><stop stop-color="${palette.backgroundStart}"/><stop offset="1" stop-color="${palette.backgroundEnd}"/></linearGradient><linearGradient id="area" x2="0" y2="1"><stop stop-color="${palette.accent}" stop-opacity=".24"/><stop offset="1" stop-color="${palette.accent}" stop-opacity="0"/></linearGradient></defs><rect x=".5" y=".5" width="739" height="375" rx="12" fill="url(#ocean)" stroke="${palette.border}" stroke-opacity=".65"/>${content}</svg>`
 }

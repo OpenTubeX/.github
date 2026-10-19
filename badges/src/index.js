@@ -37,9 +37,11 @@ export async function handleRequest(request, env, ctx, dependencies = {}) {
   if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } })
   const match = /^\/([a-z0-9-]+)\.svg$/.exec(url.pathname)
   const key = match?.[1]
-  const widget = key === 'star-history'
+  const theme = key?.endsWith('-light') ? 'light' : 'dark'
+  const widgetKey = theme === 'light' ? key.slice(0, -6) : key
+  const widget = widgetKey === 'star-history'
     ? { load: starHistory, render: renderStarHistory }
-    : key === 'project-activity' ? { load: projectActivity, render: renderProjectActivity } : null
+    : widgetKey === 'project-activity' ? { load: projectActivity, render: renderProjectActivity } : null
   if (!key || (!widget && !Object.hasOwn(definitions, key))) return new Response('Badge not found', { status: 404 })
   const definition = definitions[key]
   if (!widget && !Object.hasOwn(sources, key) && !Object.hasOwn(githubSources, key)) {
@@ -58,7 +60,7 @@ export async function handleRequest(request, env, ctx, dependencies = {}) {
     let data
     let svg
     if (widget) {
-      svg = widget.render(await widget.load(env ?? {}, upstreamFetch))
+      svg = widget.render(await widget.load(env ?? {}, upstreamFetch), theme)
     } else {
       if (Object.hasOwn(githubSources, key)) {
         data = await githubSources[key](env ?? {}, upstreamFetch)
@@ -79,7 +81,7 @@ export async function handleRequest(request, env, ctx, dependencies = {}) {
     console.error(`${key}: ${error.message}`)
     // Show the last real value while a feed is down; never display a sample value.
     const stale = await cache.match(staleKey)
-    response = svgResponse(stale ? await stale.text() : widget ? widget.render(null) : renderBadge(definition, 'Unavailable', 'unknown'), ERROR_TTL)
+    response = svgResponse(stale ? await stale.text() : widget ? widget.render(null, theme) : renderBadge(definition, 'Unavailable', 'unknown'), ERROR_TTL)
   }
   ctx.waitUntil(cache.put(cacheKey, response.clone()))
   return request.method === 'HEAD' ? new Response(null, response) : response

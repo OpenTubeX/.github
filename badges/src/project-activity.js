@@ -1,13 +1,8 @@
+import { widgetThemes } from './widget-theme.js'
 import { text } from './render.js'
 
 export const activityUrl = 'https://repobeats.axiom.co/api/embed/7abf4173ece7177b69cfb890c44de4385c4a45f1.svg'
-const colors = {
-  '#61adf4': '#89DED2', '#406cc4': '#4A9D93',
-  '#cf54fc': '#89DED2', '#7b58c9': '#4A9D93',
-  '#ff7a35': '#89DED2', '#ba473e': '#E8F2F0',
-  '#487b41': '#89DED2', '#459631': '#89DED2', '#cf3e3e': '#F3B9BE',
-  '#777': '#D5E8E4'
-}
+
 const attributes = {
   svg: ['width', 'height', 'viewBox', 'fill', 'xmlns'],
   g: ['transform'], rect: ['x', 'y', 'width', 'height', 'rx', 'fill', 'stroke', 'opacity'],
@@ -19,7 +14,15 @@ const escapeXml = value => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<
 
 // Reconstruct only the static SVG vocabulary used by this fixed feed. Never
 // forward upstream scripts, links, styles, event handlers, or external assets.
-export function renderProjectActivity(source) {
+export function renderProjectActivity(source, theme = 'dark') {
+  const palette = widgetThemes[theme]
+  const colors = {
+    '#61adf4': palette.accent, '#406cc4': palette.secondary,
+    '#cf54fc': palette.accent, '#7b58c9': palette.secondary,
+    '#ff7a35': palette.accent, '#ba473e': palette.foreground,
+    '#487b41': palette.accent, '#459631': palette.accent, '#cf3e3e': palette.negative,
+    '#777': palette.muted
+  }
   const fallback = source === null
   let content = ''
   let summary = 'Project activity: Unavailable'
@@ -40,7 +43,7 @@ export function renderProjectActivity(source) {
         labels.push(value)
         const size = textAttributes.class?.includes('smaller') ? 12 : 14
         const weight = textAttributes.class?.includes('bold') ? 'SemiBold' : 'Medium'
-        const color = textAttributes.fill === '#CF3E3E' ? '#F3B9BE' : textAttributes.class?.includes('smaller') ? '#D5E8E4' : '#E8F2F0'
+        const color = textAttributes.fill === '#CF3E3E' ? palette.negative : textAttributes.class?.includes('smaller') ? palette.muted : palette.foreground
         const width = text(value, 0, 0, size, weight).width
         const x = Number(textAttributes.x) - (textAttributes['text-anchor'] === 'end' ? width : 0)
         content += text(value, x, Number(textAttributes.y), size, weight, color).svg
@@ -77,9 +80,9 @@ export function renderProjectActivity(source) {
           if (!attrs[key]) continue
           const color = attrs[key].toLowerCase()
           if (color.startsWith('rgba(0,0,0,')) attrs[key] = 'none'
-          else if (/rgba\(255,\s*255,\s*255,/.test(color)) attrs[key] = key === 'fill' ? 'none' : '#4A9D93'
-          else if (color.startsWith('rgba(236,')) attrs[key] = '#89DED2'
-          else attrs[key] = colors[color] ?? (color.startsWith('#') ? '#89DED2' : attrs[key])
+          else if (/rgba\(255,\s*255,\s*255,/.test(color)) attrs[key] = key === 'fill' ? 'none' : palette.border
+          else if (color.startsWith('rgba(236,')) attrs[key] = palette.accent
+          else attrs[key] = colors[color] ?? (color.startsWith('#') ? palette.accent : attrs[key])
         }
         if (name === 'rect' && attrs.rx === '4.5') attrs.rx = '10'
         content += `<${name}${Object.entries(attrs).map(([key, value]) => ` ${key}="${escapeXml(value)}"`).join('')}${selfClosing ? '/' : ''}>`
@@ -89,10 +92,10 @@ export function renderProjectActivity(source) {
     if (stack.length || !labels.some(label => /^\d+ Contributions in the Last 30 Days$/.test(label)) || !labels.includes('Top Contributors')) throw new Error('Incomplete activity SVG')
     summary = `Project activity: ${labels.join('; ')}`
   } else {
-    content = text('Project activity is temporarily unavailable', 26, 80, 18).svg
+    content = text('Project activity is temporarily unavailable', 26, 80, 18, 'Medium', palette.foreground).svg
   }
   const title = escapeXml(summary)
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="862" height="402" viewBox="0 0 862 402" role="img" aria-label="${title}"><title>${title}</title><defs><linearGradient id="activity-ocean" x2="1" y2="1"><stop stop-color="#0B3D3E"/><stop offset="1" stop-color="#145A58"/></linearGradient></defs><rect x=".5" y=".5" width="861" height="401" rx="12" fill="url(#activity-ocean)" stroke="#4A9D93" stroke-opacity=".65"/><g transform="translate(24 24)" fill="none">${content}</g>${text('Activity over the last 30 days / Data by Repobeats', 24, 380, 12, 'Medium', '#D5E8E4').svg}</svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="862" height="402" viewBox="0 0 862 402" role="img" aria-label="${title}"><title>${title}</title><defs><linearGradient id="activity-ocean" x2="1" y2="1"><stop stop-color="${palette.backgroundStart}"/><stop offset="1" stop-color="${palette.backgroundEnd}"/></linearGradient></defs><rect x=".5" y=".5" width="861" height="401" rx="12" fill="url(#activity-ocean)" stroke="${palette.border}" stroke-opacity=".65"/><g transform="translate(24 24)" fill="none">${content}</g>${text('Activity over the last 30 days / Data by Repobeats', 24, 380, 12, 'Medium', palette.muted).svg}</svg>`
 }
 
 export async function projectActivity(env, fetch) {
