@@ -13,7 +13,7 @@ test('widget themes preserve all data and geometry, including empty and error st
     for (const value of values) {
       const dark = render(value)
       const light = render(value, 'light')
-      assert.match(dark, /stop-color="#202426"/)
+      assert.match(dark, /stop-color="#090C10"/)
       assert.match(light, /stop-color="#F5FAF8"/)
       assert.match(light, /fill="#(?:0B3D3E|3D5A5B)"/)
       const withoutColors = svg => svg.replace(/#[\da-f]{6}/gi, '#COLOR')
