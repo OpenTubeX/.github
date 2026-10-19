@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { activityUrl, projectActivity, renderProjectActivity } from '../src/project-activity.js'
+import { text } from '../src/render.js'
 import { handleRequest } from '../src/index.js'
 
 const fixture = readFileSync(new URL('./fixtures/repobeats.svg', import.meta.url), 'utf8')
@@ -66,4 +67,20 @@ test('activity route supports HEAD, shared caching, stale charts and first-reque
   const response = await request()
   assert.equal(response.headers.get('Cache-Control'), 'public, max-age=30')
   assert.match(await response.text(), /Project activity: Unavailable/)
+})
+
+
+test('activity decodes XML entities exactly once in labels and glyphs', () => {
+  for (const [encoded, decoded] of [
+    ['&amp; &lt; &gt; &quot; &apos;', `& < > " '`],
+    ['&amp;lt; &amp;gt; &amp;quot; &amp;apos;', '&lt; &gt; &quot; &apos;'],
+    ['&amp;amp;lt;', '&amp;lt;'],
+    ['&amp;lt;script&amp;gt;', '&lt;script&gt;']
+  ]) {
+    const svg = renderProjectActivity(fixture.replace('D3SOX', encoded))
+    const title = /<title>(.*?)<\/title>/.exec(svg)[1]
+    assert.ok(title.includes(encoded), `${encoded} must survive the decode/encode round trip`)
+    assert.ok(svg.includes(text(decoded, 0, 19, 12, 'SemiBold', '#D5E8E4').svg), 'glyphs must show the once-decoded text')
+    assert.ok(!svg.includes('<script>'))
+  }
 })

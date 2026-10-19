@@ -36,7 +36,7 @@ export function renderProjectActivity(source) {
           if (token.trim()) throw new Error('Unexpected activity SVG text')
           continue
         }
-        const value = token.trim().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+        const value = token.trim().replace(/&(amp|lt|gt|quot|apos);/g, (_, entity) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[entity])
         labels.push(value)
         const size = textAttributes.class?.includes('smaller') ? 12 : 14
         const weight = textAttributes.class?.includes('bold') ? 'SemiBold' : 'Medium'
