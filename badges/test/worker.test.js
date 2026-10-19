@@ -185,3 +185,40 @@ test('the last real value is shown while a feed is failing', async () => {
 test('counts use compact metric notation', () => {
   for (const [count, text] of [[0, '0'], [999, '999'], [1000, '1k'], [1250, '1.3k'], [30449, '30k'], [999999, '1M']]) assert.equal(metric(count), text)
 })
+
+test('star history paginates weekly counts, caches and preserves stale charts', async () => {
+  let failing = false
+  const h = harness(url => {
+    if (failing) return new Response('', { status: 503 })
+    const page = new URL(url).searchParams.get('page')
+    return Response.json(page === '1'
+      ? Array.from({ length: 30 }, (_, i) => ({ week: 1700000000 + (30 - i) * 604800, total: 2 }))
+      : [{ week: 1700000000, total: 3 }])
+  }, { GITHUB_TOKEN: 'secret' })
+  const response = await h.request('/star-history.svg', 'HEAD')
+  assert.equal(await response.text(), '')
+  assert.equal(response.headers.get('Cache-Control'), 'public, max-age=21600')
+  const svg = await (await h.request('/star-history.svg?ignore=1')).text()
+  assert.match(svg, /Star history: 63 stars/)
+  assert.equal(h.calls.length, 2)
+  assert.equal(h.calls[0].options.headers['X-GitHub-Api-Version'], '2026-03-10')
+  assert.equal(h.calls[0].options.headers.Authorization, 'Bearer secret')
+  assert.ok(!/<text|<image|NaN|undefined/.test(svg))
+  failing = true
+  h.entries.delete('https://badges.example/star-history.svg')
+  assert.equal(await (await h.request('/star-history.svg')).text(), svg)
+})
+
+test('star history rejects invalid upstream data and handles an empty history', async () => {
+  for (const data of [{}, [{ week: 'invalid', total: 1 }], [{ week: 1700000000, total: -1 }]]) {
+    const h = harness(data)
+    const response = await h.request('/star-history.svg')
+    assert.match(await response.text(), /Star history: Unavailable/)
+    assert.equal(response.headers.get('Cache-Control'), 'public, max-age=30')
+  }
+  for (const data of [[], [{ week: 1700000000, total: 0 }], [{ week: 1700000000, total: 1 }]]) {
+    const svg = await (await harness(data).request('/star-history.svg')).text()
+    assert.ok(!/NaN|Infinity|undefined/.test(svg))
+    assert.match(svg, /Star history: [01] stars/)
+  }
+})

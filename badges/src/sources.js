@@ -1,11 +1,11 @@
 const REPO = '/repos/OpenTubeX/OpenTubeX'
 
-async function github(path, env, fetch) {
+async function github(path, env, fetch, version = '2022-11-28') {
   const response = await fetch(`https://api.github.com${path}`, {
     headers: {
       Accept: 'application/vnd.github+json',
       'User-Agent': 'opentubex-badges',
-      'X-GitHub-Api-Version': '2022-11-28',
+      'X-GitHub-Api-Version': version,
       ...(env.GITHUB_TOKEN ? { Authorization: `Bearer ${env.GITHUB_TOKEN}` } : {})
     },
     signal: AbortSignal.timeout(10000)
@@ -70,4 +70,22 @@ export default {
   "translations": "https://img.shields.io/weblate/progress/opentubex.json?server=https%3A%2F%2Fweblate.opentubex.org",
   "fluxer": "https://img.shields.io/badge/dynamic/json.json?url=https%3A%2F%2Fapi.fluxer.app%2Finvites%2FPHdJoM1G&query=%24.member_count&suffix=+members",
   "aur": "https://img.shields.io/aur/version/opentubex-bin.json"
+}
+
+export async function starHistory(env, fetch) {
+  const weeks = []
+  // GitHub returns at most 30 weeks per page, newest first.
+  for (let page = 1; page <= 100; page++) {
+    const batch = await github(`${REPO}/stargazers/history?per_page=30&page=${page}`, env, fetch, '2026-03-10')
+    if (!Array.isArray(batch) || batch.length > 30 || batch.some(item =>
+      !Number.isSafeInteger(item.week) || item.week < 0 || !Number.isSafeInteger(item.total) || item.total < 0)) {
+      throw new Error('Invalid star history')
+    }
+    weeks.push(...batch)
+    if (batch.length < 30) {
+      let count = 0
+      return weeks.reverse().map(({ week, total }) => ({ time: week * 1000, count: count += total }))
+    }
+  }
+  throw new Error('Star history exceeds pagination limit')
 }

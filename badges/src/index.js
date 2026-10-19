@@ -1,5 +1,7 @@
 import { definitions, renderBadge } from './render.js'
-import sources, { githubSources } from './sources.js'
+import { projectActivity, renderProjectActivity } from './project-activity.js'
+import { renderStarHistory } from './star-history.js'
+import sources, { githubSources, starHistory } from './sources.js'
 
 const SUCCESS_TTL = 300
 const ERROR_TTL = 30
@@ -35,9 +37,12 @@ export async function handleRequest(request, env, ctx, dependencies = {}) {
   if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } })
   const match = /^\/([a-z0-9-]+)\.svg$/.exec(url.pathname)
   const key = match?.[1]
-  if (!key || !Object.hasOwn(definitions, key)) return new Response('Badge not found', { status: 404 })
+  const widget = key === 'star-history'
+    ? { load: starHistory, render: renderStarHistory }
+    : key === 'project-activity' ? { load: projectActivity, render: renderProjectActivity } : null
+  if (!key || (!widget && !Object.hasOwn(definitions, key))) return new Response('Badge not found', { status: 404 })
   const definition = definitions[key]
-  if (!Object.hasOwn(sources, key) && !Object.hasOwn(githubSources, key)) {
+  if (!widget && !Object.hasOwn(sources, key) && !Object.hasOwn(githubSources, key)) {
     const response = svgResponse(renderBadge(definition), 86400)
     return request.method === 'HEAD' ? new Response(null, response) : response
   }
@@ -51,25 +56,30 @@ export async function handleRequest(request, env, ctx, dependencies = {}) {
   let response
   try {
     let data
-    if (Object.hasOwn(githubSources, key)) {
-      data = await githubSources[key](env ?? {}, upstreamFetch)
+    let svg
+    if (widget) {
+      svg = widget.render(await widget.load(env ?? {}, upstreamFetch))
     } else {
-      const upstream = await upstreamFetch(sources[key], {
-        headers: { Accept: 'application/json' },
-        signal: AbortSignal.timeout(10000)
-      })
-      if (!upstream.ok) throw new Error(`Upstream status ${upstream.status}`)
-      data = await upstream.json()
+      if (Object.hasOwn(githubSources, key)) {
+        data = await githubSources[key](env ?? {}, upstreamFetch)
+      } else {
+        const upstream = await upstreamFetch(sources[key], {
+          headers: { Accept: 'application/json' },
+          signal: AbortSignal.timeout(10000)
+        })
+        if (!upstream.ok) throw new Error(`Upstream status ${upstream.status}`)
+        data = await upstream.json()
+      }
+      const { value, state } = parseData(data, definition)
+      svg = renderBadge(definition, value, state)
     }
-    const { value, state } = parseData(data, definition)
-    const svg = renderBadge(definition, value, state)
-    response = svgResponse(svg, SUCCESS_TTL)
+    response = svgResponse(svg, widget ? 21600 : SUCCESS_TTL)
     ctx.waitUntil(cache.put(staleKey, svgResponse(svg, STALE_TTL)))
   } catch (error) {
     console.error(`${key}: ${error.message}`)
     // Show the last real value while a feed is down; never display a sample value.
     const stale = await cache.match(staleKey)
-    response = svgResponse(stale ? await stale.text() : renderBadge(definition, 'Unavailable', 'unknown'), ERROR_TTL)
+    response = svgResponse(stale ? await stale.text() : widget ? widget.render(null) : renderBadge(definition, 'Unavailable', 'unknown'), ERROR_TTL)
   }
   ctx.waitUntil(cache.put(cacheKey, response.clone()))
   return request.method === 'HEAD' ? new Response(null, response) : response

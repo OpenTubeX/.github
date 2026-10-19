@@ -65,7 +65,7 @@ function escapeXml(value) {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[char])
 }
 
-function text(value, x, baseline, size = 13, weight = 'Medium', color = '#E8F2F0') {
+export function text(value, x, baseline, size = 13, weight = 'Medium', color = '#E8F2F0') {
   const scale = size / 1000
   let width = 0
   let paths = ''
@@ -77,7 +77,7 @@ function text(value, x, baseline, size = 13, weight = 'Medium', color = '#E8F2F0
   return { svg: `<g fill="${color}" transform="translate(${x} ${baseline}) scale(${scale} ${-scale})">${paths}</g>`, width: width * scale }
 }
 
-function icon(name, x, y, color, size) {
+export function icon(name, x, y, color, size) {
   if (brandIcons[name]) {
     return brandIcons[name]
       .replace('<svg ', `<svg x="${x}" y="${y}" width="${size}" height="${size}" `)
