@@ -49,12 +49,16 @@ export async function handleRequest(request, env, ctx, dependencies = {}) {
     return request.method === 'HEAD' ? new Response(null, response) : response
   }
   // Ignore query strings so callers cannot bypass the upstream request cache.
-  const cacheKey = new Request(`${url.origin}/${key}.svg`)
+  // Rendered widgets must not survive a deployment that changes their design.
+  const cacheUrl = new URL(`${url.origin}/${key}.svg`)
+  if (widget && env?.CF_VERSION_METADATA?.id) cacheUrl.searchParams.set('version', env.CF_VERSION_METADATA.id)
+  const cacheKey = new Request(cacheUrl)
   const cache = dependencies.cache ?? caches.default
   const hit = await cache.match(cacheKey)
   if (hit) return request.method === 'HEAD' ? new Response(null, hit) : hit
   const upstreamFetch = dependencies.fetch ?? fetch
-  const staleKey = new Request(`${url.origin}/${key}.svg?stale`)
+  const staleUrl = new URL(cacheUrl)
+  const staleKey = new Request(`${staleUrl}${staleUrl.search ? '&' : '?'}stale`)
   let response
   try {
     let data

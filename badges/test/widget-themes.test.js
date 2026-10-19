@@ -62,3 +62,33 @@ test('light and dark widget routes retain independent caches and stale fallbacks
     assert.match(svg, /stop-color="#F5FAF8"/)
   }
 })
+
+test('a new deployment cannot reuse rendered widgets from the previous deployment', async () => {
+  const entries = new Map()
+  let calls = 0
+  let failing = false
+  const dependencies = {
+    cache: { match: async key => entries.get(key.url)?.clone(), put: async (key, response) => { entries.set(key.url, response) } },
+    fetch: async () => {
+      calls++
+      return failing ? new Response('', { status: 503 }) : Response.json([{ week: 1700000000, total: 116 }])
+    }
+  }
+  const request = async (id, query = '') => {
+    const pending = []
+    const response = await handleRequest(new Request(`https://badges.example/star-history.svg${query}`), { CF_VERSION_METADATA: { id } }, { waitUntil: p => pending.push(p) }, dependencies)
+    await Promise.all(pending)
+    return response.text()
+  }
+  await request('old')
+  // Reproduce an old deployment's already-rendered success and stale images.
+  for (const key of entries.keys()) entries.set(key, new Response('<svg>old teal design</svg>'))
+  const fresh = await request('new')
+  assert.ok(!fresh.includes('old teal design'))
+  assert.match(fresh, /#090C10/)
+  assert.equal(calls, 2)
+  assert.equal(await request('new', '?v=anything'), fresh)
+  assert.equal(calls, 2, 'client query strings cannot bypass the upstream cache')
+  failing = true
+  assert.match(await request('another'), /Unavailable/, 'do not resurrect an old design from the stale cache')
+})
