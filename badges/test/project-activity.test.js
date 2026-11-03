@@ -14,7 +14,7 @@ test('activity preserves every metric, chart bar and contributor in the styled S
   assert.equal((svg.match(/ opacity="/g) ?? []).length, (fixture.match(/ opacity="/g) ?? []).length)
   assert.ok(!/<text|<style|<image|NaN|undefined/.test(svg))
   assert.match(svg, /rx="12"/)
-  assert.match(svg, /#090C10/)
+  assert.match(svg, /#0C0C0C/)
 })
 
 test('activity rejects active markup, external resources and changed feed layouts', () => {
@@ -80,7 +80,7 @@ test('activity decodes XML entities exactly once in labels and glyphs', () => {
     const svg = renderProjectActivity(fixture.replace('D3SOX', encoded))
     const title = /<title>(.*?)<\/title>/.exec(svg)[1]
     assert.ok(title.includes(encoded), `${encoded} must survive the decode/encode round trip`)
-    assert.ok(svg.includes(text(decoded, 0, 19, 12, 'SemiBold', '#D5E8E4').svg), 'glyphs must show the once-decoded text')
+    assert.ok(svg.includes(text(decoded, 0, 19, 12, 'SemiBold', '#D4D4D4').svg), 'glyphs must show the once-decoded text')
     assert.ok(!svg.includes('<script>'))
   }
 })

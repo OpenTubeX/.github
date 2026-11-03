@@ -55,17 +55,17 @@ export const definitions = {
 }
 
 const states = {
-  passing: { background: '#147A70', foreground: '#FFFFFF', symbol: '<path d="m-3 0 2 2 4-4"/>' },
+  passing: { background: '#1A7F37', foreground: '#FFFFFF', symbol: '<path d="m-3 0 2 2 4-4"/>' },
   failing: { background: '#FCE2E3', foreground: '#843C43', symbol: '<path d="m-2.5-2.5 5 5m-5 0 5-5"/>' },
   pending: { background: '#FFF1CB', foreground: '#725000', symbol: '<path d="M0-3v3l2 1"/><circle r="5"/>' },
-  unknown: { background: '#D5E8E4', foreground: '#3D5A5B', symbol: '<path d="M-3 0h6"/>' }
+  unknown: { background: '#F7E3E0', foreground: '#4F4F4F', symbol: '<path d="M-3 0h6"/>' }
 }
 
 function escapeXml(value) {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[char])
 }
 
-export function text(value, x, baseline, size = 13, weight = 'Medium', color = '#E8F2F0') {
+export function text(value, x, baseline, size = 13, weight = 'Medium', color = '#F5F5F5') {
   const scale = size / 1000
   let width = 0
   let paths = ''
@@ -91,19 +91,19 @@ export function renderBadge(definition, value = definition.value, state) {
   const outline = definition.kind === 'outline'
   const height = cta ? 44 : 32
   const radius = cta ? 12 : 10
-  const label = text(definition.label, cta ? 42 : 36, cta ? 27 : 20.5, cta ? 15 : 13, cta ? 'SemiBold' : 'Medium', outline ? '#0B3D3E' : cta ? '#FFFFFF' : '#E8F2F0')
+  const label = text(definition.label, cta ? 42 : 36, cta ? 27 : 20.5, cta ? 15 : 13, cta ? 'SemiBold' : 'Medium', outline ? '#2A1512' : cta ? '#FFFFFF' : '#F5F5F5')
   const split = Math.ceil((cta ? 42 : 36) + label.width + 13)
   let width = split + (cta ? 7 : 0)
-  let content = icon(definition.icon, cta ? 16 : 12, cta ? 13 : 8, cta ? '#E8F2F0' : outline ? '#147A70' : '#89DED2', cta ? 18 : 16) + label.svg
+  let content = icon(definition.icon, cta ? 16 : 12, cta ? 13 : 8, cta ? '#FFFFFF' : outline ? '#C62D1F' : '#FF8478', cta ? 18 : 16) + label.svg
   if (value !== undefined) {
     const status = states[state]
-    const foreground = status?.foreground ?? '#0B3D3E'
+    const foreground = status?.foreground ?? '#3B1511'
     const message = text(value, split + 12 + (status ? 18 : 0), 20.5, 13, 'SemiBold', foreground)
     width = Math.ceil(split + 24 + (status ? 18 : 0) + message.width)
-    content = `<rect x="${split}" width="${width - split}" height="${height}" fill="${status?.background ?? '#D5E8E4'}"/>` + content
+    content = `<rect x="${split}" width="${width - split}" height="${height}" fill="${status?.background ?? '#F7E3E0'}"/>` + content
     if (status) content += `<g transform="translate(${split + 17} 16)" fill="none" stroke="${foreground}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${status.symbol}</g>`
     content += message.svg
   }
   const title = escapeXml(definition.label + (value !== undefined ? `: ${value}` : ''))
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}"><title>${title}</title><defs><linearGradient id="ocean" x2="1" y2="1"><stop stop-color="#0B3D3E"/><stop offset="1" stop-color="${cta ? '#147A70' : '#145A58'}"/></linearGradient><clipPath id="corners"><rect width="${width}" height="${height}" rx="${radius}"/></clipPath></defs><g clip-path="url(#corners)"><rect width="${width}" height="${height}" fill="${outline ? '#E8F2F0' : 'url(#ocean)'}"/>${content}</g><rect x=".5" y=".5" width="${width - 1}" height="${height - 1}" rx="${radius - .5}" fill="none" stroke="${outline ? '#A9CEC7' : '#4A9D93'}" stroke-opacity=".65"/></svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}"><title>${title}</title><defs><linearGradient id="ocean" x2="1" y2="1"><stop stop-color="${cta ? '#E33A2B' : '#1A1A1A'}"/><stop offset="1" stop-color="${cta ? '#B52A1D' : '#2E1B19'}"/></linearGradient><clipPath id="corners"><rect width="${width}" height="${height}" rx="${radius}"/></clipPath></defs><g clip-path="url(#corners)"><rect width="${width}" height="${height}" fill="${outline ? '#FCEFED' : 'url(#ocean)'}"/>${content}</g><rect x=".5" y=".5" width="${width - 1}" height="${height - 1}" rx="${radius - .5}" fill="none" stroke="${outline ? '#EDC8C3' : cta ? '#FF6253' : '#5C3330'}" stroke-opacity=".65"/></svg>`
 }
