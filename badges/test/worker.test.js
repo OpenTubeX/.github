@@ -140,7 +140,7 @@ test('all dynamic sources use fixed HTTPS JSON feeds and preserve data selection
     assert.ok(url.pathname.endsWith('.json'))
   }
   for (const key of ['build', 'e2e', 'codeql']) assert.equal(new URL(sources[key]).searchParams.get('branch'), 'development')
-  assert.equal(new URL(sources.translations).searchParams.get('server'), 'https://weblate.opentubex.org')
+  assert.equal(new URL(sources.translations).searchParams.get('server'), 'https://hosted.weblate.org')
 })
 
 test('GitHub badges read the GitHub API directly with the configured token', async () => {
