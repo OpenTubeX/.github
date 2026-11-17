@@ -1,6 +1,7 @@
 import { definitions, renderBadge } from './render.js'
 import { projectActivity, renderProjectActivity } from './project-activity.js'
 import { renderStarHistory } from './star-history.js'
+import { renderTranslationStatus, translationStatus } from './translation-status.js'
 import sources, { githubSources, starHistory } from './sources.js'
 
 const SUCCESS_TTL = 300
@@ -39,9 +40,11 @@ export async function handleRequest(request, env, ctx, dependencies = {}) {
   const key = match?.[1]
   const theme = key?.endsWith('-light') ? 'light' : 'dark'
   const widgetKey = theme === 'light' ? key.slice(0, -6) : key
-  const widget = widgetKey === 'star-history'
-    ? { load: starHistory, render: renderStarHistory }
-    : widgetKey === 'project-activity' ? { load: projectActivity, render: renderProjectActivity } : null
+  const widget = {
+    'star-history': { load: starHistory, render: renderStarHistory },
+    'project-activity': { load: projectActivity, render: renderProjectActivity },
+    'translation-status': { load: translationStatus, render: renderTranslationStatus }
+  }[widgetKey] ?? null
   if (!key || (!widget && !Object.hasOwn(definitions, key))) return new Response('Badge not found', { status: 404 })
   const definition = definitions[key]
   if (!widget && !Object.hasOwn(sources, key) && !Object.hasOwn(githubSources, key)) {

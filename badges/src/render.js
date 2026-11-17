@@ -70,7 +70,8 @@ export function text(value, x, baseline, size = 13, weight = 'Medium', color = '
   let width = 0
   let paths = ''
   for (const char of value) {
-    const glyph = fonts[weight][char] ?? fonts[weight]['?']
+    // Fall back to the base letter for accented characters the font subset lacks.
+    const glyph = fonts[weight][char] ?? fonts[weight][char.normalize('NFD')[0]] ?? fonts[weight]['?']
     paths += `<path transform="translate(${width} 0)" d="${glyph.path}"/>`
     width += glyph.width
   }

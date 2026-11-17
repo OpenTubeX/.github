@@ -4,12 +4,13 @@ import { readFileSync } from 'node:fs'
 import { handleRequest } from '../src/index.js'
 import { renderStarHistory } from '../src/star-history.js'
 import { renderProjectActivity } from '../src/project-activity.js'
+import { renderTranslationStatus } from '../src/translation-status.js'
 
 const activity = readFileSync(new URL('./fixtures/repobeats.svg', import.meta.url), 'utf8')
 const history = [{ time: 1700000000000, count: 3 }, { time: 1700604800000, count: 116 }]
 
 test('widget themes preserve all data and geometry, including empty and error states', () => {
-  for (const [render, values] of [[renderStarHistory, [history, [], null]], [renderProjectActivity, [activity, null]]]) {
+  for (const [render, values] of [[renderStarHistory, [history, [], null]], [renderProjectActivity, [activity, null]], [renderTranslationStatus, [[{ name: 'Norwegian Bokmål', total: 10, translated: 3 }], null]]]) {
     for (const value of values) {
       const dark = render(value)
       const light = render(value, 'light')
